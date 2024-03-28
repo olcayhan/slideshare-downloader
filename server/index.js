@@ -1,19 +1,26 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
+const cors = require("cors");
+var bodyParser = require("body-parser");
 
 const app = express();
-const port = 3000; // Varsayılan olarak 3000 portunda bir sunucu oluşturuyoruz
+const port = 5000; // Varsayılan olarak 3000 portunda bir sunucu oluşturuyoruz
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors());
 
-app.post("/scrape", async (req, res) => {
-  const { url } = req.body;
-  const data = await scrapeWebsite(url);
-  res.status(201).json({ data: data });
+app.post("/api/scrape", async (req, res) => {
+  try {
+    const { url } = req.body;
+    const data = await scrapeWebsite(url);
+    res.json(data);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 app.listen(port, () => {
-  console.log(`Sunucu http://localhost:${port} adresinde çalışıyor!`);
+  console.log(`http://localhost:${port}`);
 });
 
 async function scrapeWebsite(url) {
@@ -31,7 +38,7 @@ async function scrapeWebsite(url) {
 
     while (!pageLoaded && retryCount < maxRetries) {
       try {
-        await page.goto(url, { timeout: 1000 });
+        await page.goto(url, { timeout: 2000 });
         console.log("Page Opened");
         pageLoaded = true;
       } catch (error) {

@@ -1,24 +1,32 @@
 "use client";
+import axios from "axios";
+import React, { useState } from "react";
 
-import scrapeWebsite from "@/libs/scrapper";
-import { useState } from "react";
+const Page = () => {
+  const [data, setData] = useState<string[]>([]);
 
-export default function Home() {
-  const [titles, setTitles] = useState<any[]>([]);
-  const url = "https://www.slideshare.net/marketingartwork/ai-trends-in-creative-operations-2024-by-artwork-flowpdf";
-
-  const handleScrape = async () => {
-    const scrapedTitles = await scrapeWebsite(url);
-    setTitles(scrapedTitles);
+  const fetchData = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/scrape", {
+        url: "https://www.slideshare.net/atkearney/pursuing-customer-inspired-growth",
+      });
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
   return (
     <div>
-      <button onClick={handleScrape}>Pull Data</button>
+      <button onClick={fetchData}>Fetch Data</button>
+      <hr />
       <div>
-        {titles.map((title: string, index: number) => (
-          <img key={index} src={url + title} />
+        {data.map((data) => (
+          <img src={data} />
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default Page;
