@@ -1,25 +1,20 @@
-/* const axios = require("axios");
-const cheerio = require("cheerio");
-
-async function scrape(url) {
-  try {
-    const response = await axios.get(url);
-    const $ = cheerio.load(response.data);
-
-    $("#new-player")
-      .find("img")
-      .each((i, el) => {
-        console.log("a : " + $(el));
-      });
-  } catch (error) {
-    console.error("Hata:", error);
-  }
-}
-const url = "https://www.slideshare.net/SkeletonTech/skeleton-culture-code";
-
-scrape(url); */
-
+const express = require("express");
 const puppeteer = require("puppeteer");
+
+const app = express();
+const port = 3000; // Varsayılan olarak 3000 portunda bir sunucu oluşturuyoruz
+
+app.use(express.json());
+
+app.post("/scrape", async (req, res) => {
+  const { url } = req.body;
+  const data = await scrapeWebsite(url);
+  res.status(201).json({ data: data });
+});
+
+app.listen(port, () => {
+  console.log(`Sunucu http://localhost:${port} adresinde çalışıyor!`);
+});
 
 async function scrapeWebsite(url) {
   let browser;
@@ -68,6 +63,7 @@ async function scrapeWebsite(url) {
     // HTML içeriğini kullanarak veri çekme işlemlerini gerçekleştir
 
     await browser.close();
+    return imgSrcList;
   } catch (error) {
     console.error("Hata:", error);
     if (browser) {
@@ -96,9 +92,3 @@ async function autoScroll(page) {
     });
   });
 }
-
-// Web sitesi URL'si
-const url = "https://www.slideshare.net/atkearney/strategy-study-results";
-
-// Fonksiyonu çağırarak veriyi çek
-scrapeWebsite(url);
