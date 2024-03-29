@@ -1,23 +1,23 @@
 const { createCanvas, loadImage } = require("canvas");
-const jsPDF = require("jspdf");
+const { jsPDF } = require("jspdf");
 
-const resimURLler = ["resim1.jpg", "resim2.jpg", "resim3.jpg"];
-
-async function convertImagetoPdf() {
+async function convertImagetoPdf(images) {
+  console.log("aldı");
   const pdf = new jsPDF();
-
-  for (const resimURL of resimURLler) {
-    const img = await loadImage(resimURL);
+  console.log("aldı2");
+  for (const resimURL of images) {
+    const img = await loadImage(resimURL.srcset);
     const canvas = createCanvas(img.width, img.height);
     const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(img, 0, 0, img.width, img.height);
 
     const imageDataURL = canvas.toDataURL("image/jpeg");
-    pdf.addImage(imageDataURL, "JPEG", 0, 0);
+    console.log("aldı3");
+    pdf.addImage(imageDataURL, "JPEG", 10, 10);
+    console.log("aldı4");
     pdf.addPage();
   }
-
-  pdf.save("resimler.pdf");
+  return pdf.output("arraybuffer");
 }
 
 module.exports = convertImagetoPdf;

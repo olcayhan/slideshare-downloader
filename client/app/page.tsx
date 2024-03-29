@@ -13,10 +13,12 @@ export type ImageDt = {
 
 const Page = () => {
   const [data, setData] = useState<ImageDt[]>([]);
+  const [pdf, setPDF] = useState<Blob | null>();
   const [url, setUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingPdf, setIsLoadingPdf] = useState<boolean>(false);
 
-  const fetchData = async () => {
+  const scrapeData = async () => {
     try {
       setIsLoading(true);
       const response = await axios.post("http://localhost:5000/api/scrape", {
@@ -27,6 +29,33 @@ const Page = () => {
       console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+  const convertPdfData = async () => {
+    try {
+      setIsLoadingPdf(true);
+      const response = await axios.post(
+        "http://localhost:5000/api/pdfcon",
+        {
+          images: data,
+        },
+        { responseType: "blob" }
+      );
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "resimler.pdf"); // İndirilen dosyanın adı
+
+      // Bağlantıya tıklama işlemi
+      document.body.appendChild(link);
+      link.click();
+
+      // Artık bağlantıya gerek yoktur, kaldırabiliriz
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoadingPdf(false);
     }
   };
 
@@ -49,7 +78,7 @@ const Page = () => {
             />
             <button
               className="col-span-2 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
-              onClick={fetchData}
+              onClick={scrapeData}
               disabled={!url || isLoading}
             >
               {isLoading ? (
@@ -63,12 +92,13 @@ const Page = () => {
               )}
             </button>
           </div>
-          <div className="flex flex-row justify-center items-center w-full gap-5 p-2">
+          <div className="grid grid-cols-8 w-full gap-5 p-2">
             <button
-              className="col-span-2 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
-              disabled={!url || isLoading}
+              className="col-span-4 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
+              onClick={convertPdfData}
+              disabled={!data || isLoadingPdf}
             >
-              {isLoading ? (
+              {isLoadingPdf ? (
                 <ClipLoader
                   size={20}
                   aria-label="Loading Spinner"
@@ -78,8 +108,9 @@ const Page = () => {
                 "Download as PDF"
               )}
             </button>
+
             <button
-              className="col-span-2 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
+              className="col-span-4 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
               disabled={!url || isLoading}
             >
               {isLoading ? (

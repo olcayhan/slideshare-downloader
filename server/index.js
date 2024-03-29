@@ -24,7 +24,7 @@ app.post("/api/pdfcon", async (req, res) => {
   try {
     const { images } = req.body;
     const data = await convertImagetoPdf(images);
-    res.json(data);
+    res.send(Buffer.from(data));
   } catch (e) {
     console.log(e);
   }
