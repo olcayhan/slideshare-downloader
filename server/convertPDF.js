@@ -4,8 +4,7 @@ const { jsPDF } = require("jspdf");
 async function convertImagetoPdf(images) {
   const pdf = new jsPDF();
   for (const resimURL of images) {
-    const newSrc = resimURL.srcset.split(",")[1];
-    const img = await loadImage(newSrc);
+    const img = await loadImage(resimURL.src);
     const canvas = createCanvas(img.width, img.height);
     const ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0, img.width, img.height);

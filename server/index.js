@@ -3,6 +3,7 @@ const cors = require("cors");
 var bodyParser = require("body-parser");
 const scrapeWebsite = require("./scrapper");
 const convertImagetoPdf = require("./convertPDF");
+const scrapeWebsiteCheerio = require("./cheerioScrapper");
 
 const app = express();
 const port = 5000;
@@ -13,7 +14,7 @@ app.use(cors());
 app.post("/api/scrape", async (req, res) => {
   try {
     const { url } = req.body;
-    const data = await scrapeWebsite(url);
+    const data = await scrapeWebsiteCheerio(url);
     res.json(data);
   } catch (e) {
     console.log(e);

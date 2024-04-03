@@ -96,7 +96,7 @@ const Page = () => {
             <button
               className="col-span-4 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
               onClick={convertPdfData}
-              disabled={!data || isLoadingPdf}
+              disabled={data.length === 0 || isLoadingPdf}
             >
               {isLoadingPdf ? (
                 <ClipLoader
@@ -128,15 +128,7 @@ const Page = () => {
 
         <div className="flex flex-col justify-start items-center gap-10 h-[800px] overflow-y-auto p-4">
           {data.map((data, key) => (
-            <img
-              src={data.src}
-              srcSet={data.srcset}
-              alt={data.alt}
-              width={800}
-              sizes={data.sizes}
-              loading="lazy"
-              key={key}
-            />
+            <img src={data.src} alt={data.alt} width={800} key={key} />
           ))}
         </div>
       </div>
