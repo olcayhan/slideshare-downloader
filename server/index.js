@@ -1,9 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-var bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 const scrapeWebsite = require("./scrapper");
 const convertImagetoPdf = require("./convertPDF");
-const scrapeWebsiteCheerio = require("./cheerioScrapper");
 const convertImagetoPPTX = require("./convertPPTX");
 
 const app = express();
@@ -15,7 +14,7 @@ app.use(cors());
 app.post("/api/scrape", async (req, res) => {
   try {
     const { url } = req.body;
-    const data = await scrapeWebsiteCheerio(url);
+    const data = await scrapeWebsite(url);
     res.json(data);
   } catch (e) {
     console.log(e);

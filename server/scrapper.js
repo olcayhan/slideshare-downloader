@@ -1,61 +1,27 @@
-const puppeteer = require("puppeteer");
-const autoScroll = require("./autoScroll");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
 async function scrapeWebsite(url) {
-  let browser;
   try {
-    browser = await puppeteer.launch();
+    const response = await axios.get(url);
+    const html = response.data;
 
-    const page = await browser.newPage();
-    let pageLoaded = false;
-    let retryCount = 0;
-    const maxRetries = 50;
+    const $ = cheerio.load(html);
+    const newArr = [];
 
-    while (!pageLoaded && retryCount < maxRetries) {
-      try {
-        await page.goto(url, { timeout: 2000 });
-        console.log("Page Opened");
-        pageLoaded = true;
-      } catch (error) {
-        console.error(`Failed to navigate to ${url}, retrying...`);
-        retryCount++;
-      }
-    }
-
-    if (!pageLoaded) {
-      console.error(
-        `Failed to navigate to ${url} after ${maxRetries} retries.`
-      );
-      return;
-    }
-
-    await autoScroll(page);
-
-    const imgSrcList = await page.evaluate(() => {
-      const parent = document.querySelector("#new-player");
-      const imgElements = parent.querySelectorAll("img");
-      const srcList = [];
-      imgElements.forEach((img) => {
-        img.src !==
-          "https://public.slidesharecdn.com/_next/static/media/save-slide-icon-424766.b5658b5b.svg" &&
-          srcList.push({
-            srcset: img.srcset,
-            src: img.src,
-            alt: img.alt,
-            type: img.type,
-            sizes: img.sizes,
-          });
+    const pageTitle = $("#new-player").find("img");
+    const newTitle = pageTitle[0].attribs.src;
+    const urlCon = newTitle.split("1-320");
+    console.log(urlCon);
+    pageTitle.map((index, element) => {
+      newArr.push({
+        src: `${urlCon[0]}${index + 1}-638${urlCon[1]}`,
       });
-      return srcList;
     });
-
-    await browser.close();
-    return imgSrcList;
+    return newArr;
   } catch (error) {
-    console.error("Hata:", error);
-    if (browser) {
-      await browser.close();
-    }
+    console.error("Web scraping error:", error);
+    return null;
   }
 }
 

@@ -6,19 +6,12 @@ async function convertImagetoPPTX(images) {
     const pptx = new PowerPoint();
 
     for (const resimURL of images)
-      pptx
-        .addSlide()
-        .addImage({ path: resimURL.src, x: 0, y: 0, w: 10, h: 5 });
+      pptx.addSlide().addImage({ path: resimURL.src, x: 0, y: 0, w: 10, h: 5 });
 
     return pptx.write("arraybuffer");
   } catch (error) {
     console.error("Hata:", error);
   }
-}
-
-async function downloadImage(url) {
-  const response = await axios.get(url, { responseType: "arraybuffer" });
-  return Buffer.from(response.data, "binary");
 }
 
 module.exports = convertImagetoPPTX;
