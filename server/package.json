@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jspdf": "^2.5.1",
+    "pptxgenjs": "^3.12.0",
     "puppeteer": "^22.6.1",
     "request": "^2.88.2"
   }

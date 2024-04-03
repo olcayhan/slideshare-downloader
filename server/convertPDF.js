@@ -10,7 +10,7 @@ async function convertImagetoPdf(images) {
     ctx.drawImage(img, 0, 0, img.width, img.height);
 
     const imageDataURL = canvas.toDataURL("image/jpeg");
-    pdf.addImage(imageDataURL, "JPEG", 0, 0, 210, 210);
+    pdf.addImage(imageDataURL, "JPEG", 0, 50, 210, 210);
     pdf.addPage();
   }
   return pdf.output("arraybuffer");

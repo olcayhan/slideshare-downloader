@@ -18,7 +18,6 @@ async function scrapeWebsiteCheerio(url) {
     pageTitle.map((index, element) => {
       newArr.push({
         src: `${newURL[0]}${index + 1}-638${newURL[1]}`,
-        alt: $(element).attr("alt"),
       });
     });
     return newArr;

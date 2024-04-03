@@ -13,10 +13,10 @@ export type ImageDt = {
 
 const Page = () => {
   const [data, setData] = useState<ImageDt[]>([]);
-  const [pdf, setPDF] = useState<Blob | null>();
   const [url, setUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingPdf, setIsLoadingPdf] = useState<boolean>(false);
+  const [isLoadingPPTX, setIsLoadingPPTX] = useState<boolean>(false);
 
   const scrapeData = async () => {
     try {
@@ -44,18 +44,37 @@ const Page = () => {
       const url = window.URL.createObjectURL(response.data);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "resimler.pdf"); // İndirilen dosyanın adı
-
-      // Bağlantıya tıklama işlemi
+      link.setAttribute("download", "slideshare.pdf");
       document.body.appendChild(link);
       link.click();
-
-      // Artık bağlantıya gerek yoktur, kaldırabiliriz
       document.body.removeChild(link);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setIsLoadingPdf(false);
+    }
+  };
+  const convertPPTXData = async () => {
+    try {
+      setIsLoadingPPTX(true);
+      const response = await axios.post(
+        "http://localhost:5000/api/pptxcon",
+        {
+          images: data,
+        },
+        { responseType: "blob" }
+      );
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "slideshare.pptx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoadingPPTX(false);
     }
   };
 
@@ -111,16 +130,17 @@ const Page = () => {
 
             <button
               className="col-span-4 bg-orange-300 p-2 rounded-xl disabled:opacity-50"
-              disabled={!url || isLoading}
+              onClick={convertPPTXData}
+              disabled={data.length === 0 || isLoadingPPTX}
             >
-              {isLoading ? (
+              {isLoadingPPTX ? (
                 <ClipLoader
                   size={20}
                   aria-label="Loading Spinner"
                   data-testid="loader"
                 />
               ) : (
-                "Download as ZIP"
+                "Download as PPTX"
               )}
             </button>
           </div>
@@ -128,7 +148,7 @@ const Page = () => {
 
         <div className="flex flex-col justify-start items-center gap-10 h-[800px] overflow-y-auto p-4">
           {data.map((data, key) => (
-            <img src={data.src} alt={data.alt} width={800} key={key} />
+            <img src={data.src} alt={key.toString()} width={800} key={key} />
           ))}
         </div>
       </div>

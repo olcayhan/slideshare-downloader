@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 const scrapeWebsite = require("./scrapper");
 const convertImagetoPdf = require("./convertPDF");
 const scrapeWebsiteCheerio = require("./cheerioScrapper");
+const convertImagetoPPTX = require("./convertPPTX");
 
 const app = express();
 const port = 5000;
@@ -25,6 +26,15 @@ app.post("/api/pdfcon", async (req, res) => {
   try {
     const { images } = req.body;
     const data = await convertImagetoPdf(images);
+    res.send(Buffer.from(data));
+  } catch (e) {
+    console.log(e);
+  }
+});
+app.post("/api/pptxcon", async (req, res) => {
+  try {
+    const { images } = req.body;
+    const data = await convertImagetoPPTX(images);
     res.send(Buffer.from(data));
   } catch (e) {
     console.log(e);
