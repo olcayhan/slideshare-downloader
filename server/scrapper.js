@@ -10,12 +10,12 @@ async function scrapeWebsite(url) {
     const newArr = [];
 
     const pageTitle = $("#new-player").find("img");
-    const newTitle = pageTitle[0].attribs.src;
-    const urlCon = newTitle.split("1-320");
+    const newTitle = pageTitle[0].attribs.srcset.split(",");
+    const urlCon = newTitle[2].split("1-2048");
     console.log(urlCon);
     pageTitle.map((index, element) => {
       newArr.push({
-        src: `${urlCon[0]}${index + 1}-638${urlCon[1]}`,
+        src: `${urlCon[0]}${index + 1}-2048${urlCon[1]}`,
       });
     });
     return newArr;
