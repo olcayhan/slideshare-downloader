@@ -31,7 +31,7 @@ SlideShare Downloader is a web application developed with Next.js and Node.js th
 1. Start the backend server:
    ```bash
    cd backend
-   npm run dev
+   node index.js
    ```
 
 2. Start the Next.js frontend server:
